@@ -16,7 +16,13 @@ from pathlib import Path
 
 import fitz  # PyMuPDF — also used in Step 3 for full text extraction
 
-MAX_PDF_BYTES = 20 * 1024 * 1024  # 20 MB — enough for learning, blocks abuse
+MAX_PDF_BYTES = 20 * 1024 * 1024  # Retained name for compatibility.
+SUPPORTED_EXTENSIONS = {
+    ".pdf", ".txt", ".md", ".markdown", ".csv", ".json", ".html", ".htm",
+    ".docx", ".py", ".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".sql",
+    ".yaml", ".yml", ".xml", ".toml", ".ini", ".log", ".java", ".go", ".rs",
+    ".c", ".h", ".cpp", ".hpp", ".sh", ".ps1",
+}
 
 
 @dataclass
@@ -59,9 +65,10 @@ async def save_pdf_upload(
     if len(file_bytes) > MAX_PDF_BYTES:
         raise ValueError(f"File too large (max {MAX_PDF_BYTES // (1024 * 1024)} MB)")
 
-    name_lower = (original_filename or "").lower()
-    if not name_lower.endswith(".pdf"):
-        raise ValueError("Only PDF files are allowed")
+    extension = Path(original_filename or "").suffix.lower()
+    if extension not in SUPPORTED_EXTENSIONS:
+        allowed = ", ".join(sorted(SUPPORTED_EXTENSIONS))
+        raise ValueError(f"Unsupported file type. Supported: {allowed}")
 
     uploads_dir = get_uploads_dir(uploads_dir_name)
     doc_id = str(uuid.uuid4())
@@ -71,11 +78,14 @@ async def save_pdf_upload(
 
     dest.write_bytes(file_bytes)
 
-    try:
-        page_count = _read_page_count(dest)
-    except Exception as exc:
-        dest.unlink(missing_ok=True)
-        raise ValueError("Invalid or corrupted PDF") from exc
+    if extension == ".pdf":
+        try:
+            page_count = _read_page_count(dest)
+        except Exception as exc:
+            dest.unlink(missing_ok=True)
+            raise ValueError("Invalid or corrupted PDF") from exc
+    else:
+        page_count = 1
 
     uploaded_at = datetime.now(timezone.utc).isoformat()
 

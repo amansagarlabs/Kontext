@@ -6,6 +6,12 @@ const AUTH_SERVICE_URL = process.env.AMAN_AUTH_SERVICE_URL || "http://localhost:
 const PROTECTED_PATHS = [
   "/dashboard",
   "/workspace",
+  "/workspaces",
+  "/profile",
+  "/onboarding",
+  "/memory",
+  "/artifacts",
+  "/artifcat",
   "/chat",
   "/settings",
 ];
@@ -131,7 +137,7 @@ export async function middleware(req: NextRequest) {
   const token = req.cookies.get("aman_session")?.value ?? null;
   const platform =
     req.headers.get("x-aman-platform") ??
-    (pathname.startsWith("/amancrawl") ? "Context-OS Crawl" : "Context-OS Memory");
+    (pathname.startsWith("/amancrawl") ? "Kontext Crawl" : "Kontext Memory");
 
   // ── Verify session if token exists ────────────────────────────────────
   let session: { user: Record<string, unknown>; scopes: string[] } | null =
@@ -199,6 +205,12 @@ export const config = {
   matcher: [
     "/dashboard/:path*",
     "/workspace/:path*",
+    "/workspaces/:path*",
+    "/profile/:path*",
+    "/onboarding/:path*",
+    "/memory/:path*",
+    "/artifacts/:path*",
+    "/artifcat/:path*",
     "/chat/:path*",
     "/settings/:path*",
     "/api/agent/:path*",

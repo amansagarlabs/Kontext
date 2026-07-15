@@ -4,9 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { loadAuthUser, isAuthenticated, clearAuthSession } from "@/lib/auth";
-import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
-import { AgentNavigation } from "@/components/ui/agent-navigation";
-import UsageCounter from "@/components/UsageCounter";
+import { loadWorkspaces } from "@/lib/workspaces";
+import { PaperDither } from "@/components/ui/paper-dither";
 import {
   fetchDashboardStats,
   fetchRecentConversations,
@@ -32,6 +31,7 @@ import {
   Globe,
   RefreshCw,
   AlertTriangle,
+  Sparkles,
 } from "lucide-react";
 import type { AuthUser } from "@/lib/types";
 
@@ -56,6 +56,10 @@ const POLL_INTERVAL = 30000; // 30 seconds
 export default function DashboardPage() {
   const router = useRouter();
   const [user] = useState<AuthUser | null>(() => (isAuthenticated() ? loadAuthUser() : null));
+  const [workspaceCount] = useState(() => {
+    const currentUser = isAuthenticated() ? loadAuthUser() : null;
+    return currentUser ? loadWorkspaces(currentUser).length : 0;
+  });
   const [platform, setPlatform] = useState<Platform>("both");
   const [activeTab, setActiveTab] = useState("search");
   const [inputValue, setInputValue] = useState("");
@@ -167,45 +171,56 @@ export default function DashboardPage() {
   const showConversations = platform !== "crawl";
   const showCrawl = platform !== "lab";
 
+  const revealSection = (id: string) => {
+    window.setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+  };
+
+  const openRetrievalTool = (tool: string) => {
+    setPlatform("both");
+    setActiveTab(tool);
+    revealSection("retrieval-tool");
+  };
+
   return (
-    <div className="flex min-h-screen bg-[radial-gradient(circle_at_top,rgba(202,224,218,0.8),transparent_31%),#f5f7f4] text-[#1b2420] dark:bg-[radial-gradient(circle_at_top,rgba(202,224,218,0.12),transparent_30%),#11140f] dark:text-white">
+    <div className="dark flex min-h-screen bg-[#070707] text-white">
       {/* ── SIDEBAR ── */}
-      <aside className="hidden w-[240px] min-h-screen shrink-0 flex-col border-r border-[#c8d6d1] bg-[#f7f9f6]/90 py-5 backdrop-blur dark:border-white/10 dark:bg-[#11140f]/95 lg:flex">
-        <div className="px-4 pb-5 border-b border-[#e5d8c9] dark:border-white/10 mb-2">
-          <div className="text-[17px] font-bold tracking-tight">
-            <span className="text-[#e67d2b]">Context-OS</span>
-          </div>
-          <div className="text-[10px] uppercase tracking-widest text-[#8b7f72] dark:text-[#a59b90] mt-1 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#e67d2b]" />
-            Context-OS Memory + Context-OS Crawl
+      <aside className="sticky top-0 hidden h-screen w-[252px] shrink-0 flex-col border-r border-white/[0.08] bg-[#0a0a09] py-5 lg:flex">
+        <div className="mb-3 border-b border-white/[0.08] px-5 pb-5">
+          <Link href="/" className="flex items-center gap-2.5 text-[17px] font-semibold tracking-[-0.03em] text-white">
+            <span aria-hidden="true" className="size-6 rounded-full bg-[linear-gradient(135deg,#fff5a5,#f6e66c_42%,#f27a28)]" />
+            kontext
+          </Link>
+          <div className="mt-3 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.14em] text-white/35">
+            <span className="size-1.5 rounded-full bg-[#f6e879] shadow-[0_0_10px_rgba(246,232,121,0.7)]" />
+            Workspace operational
           </div>
         </div>
 
-        <nav className="flex-1 px-2 space-y-0.5">
-          <div className="text-[10px] uppercase tracking-widest text-[#8b7f72] dark:text-[#a59b90] px-3 pt-2 pb-1">General</div>
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3">
+          <div className="px-3 pb-1 pt-2 font-mono text-[9px] uppercase tracking-[0.16em] text-white/30">Workspace</div>
           <SideLink icon={<LayoutDashboard className="w-4 h-4" />} label="Dashboard" active />
-          <SideLink icon={<User className="w-4 h-4" />} label="Profile" />
-          <SideLink icon={<Layers className="w-4 h-4" />} label="Workspaces" badge={features.workspaces === -1 ? "∞" : features.workspaces} />
+          <SideLink icon={<User className="w-4 h-4" />} label="Profile" onClick={() => router.push("/profile")} />
+          <SideLink icon={<Layers className="w-4 h-4" />} label="Workspaces" badge={workspaceCount} onClick={() => router.push("/workspaces")} />
 
-          <div className="text-[10px] uppercase tracking-widest text-[#8b7f72] dark:text-[#a59b90] px-3 pt-4 pb-1">Context-OS Memory</div>
-          <SideLink icon={<Brain className="w-4 h-4" />} label="Memory" badge={stats?.memory_entries ?? 0} />
-          <SideLink icon={<FileText className="w-4 h-4" />} label="Artifacts" badge={stats?.artifacts ?? 0} />
-          <SideLink icon={<Bot className="w-4 h-4" />} label="Agents" badge={features.agents} locked={features.agents === 0} />
+          <div className="px-3 pb-1 pt-5 font-mono text-[9px] uppercase tracking-[0.16em] text-white/30">Context layer</div>
+          <SideLink icon={<Brain className="w-4 h-4" />} label="Memory" badge={stats?.memory_entries ?? 0} onClick={() => router.push("/memory")} />
+          <SideLink icon={<FileText className="w-4 h-4" />} label="Artifacts" badge={stats?.artifacts ?? 0} onClick={() => router.push("/artifacts")} />
+          <SideLink icon={<Bot className="w-4 h-4" />} label="Agents" badge={features.agents} locked={features.agents === 0} onClick={() => router.push("/chat")} />
 
-          <div className="text-[10px] uppercase tracking-widest text-[#8b7f72] dark:text-[#a59b90] px-3 pt-4 pb-1">Context-OS Crawl</div>
-          <SideLink icon={<Search className="w-4 h-4" />} label="Search" onClick={() => setActiveTab("search")} />
-          <SideLink icon={<Globe className="w-4 h-4" />} label="Crawl" onClick={() => setActiveTab("crawl")} />
-          <SideLink icon={<FileSearch className="w-4 h-4" />} label="Scrape" onClick={() => setActiveTab("scrape")} />
-          <SideLink icon={<Map className="w-4 h-4" />} label="Map" onClick={() => setActiveTab("map")} />
-          <SideLink icon={<Database className="w-4 h-4" />} label="Crawl History" badge={stats?.crawl_jobs ?? 0} />
+          <div className="px-3 pb-1 pt-5 font-mono text-[9px] uppercase tracking-[0.16em] text-white/30">Retrieval tools</div>
+          <SideLink icon={<Search className="w-4 h-4" />} label="Search" onClick={() => openRetrievalTool("search")} />
+          <SideLink icon={<Globe className="w-4 h-4" />} label="Crawl" onClick={() => openRetrievalTool("crawl")} />
+          <SideLink icon={<FileSearch className="w-4 h-4" />} label="Scrape" onClick={() => openRetrievalTool("scrape")} />
+          <SideLink icon={<Map className="w-4 h-4" />} label="Map" onClick={() => openRetrievalTool("map")} />
+          <SideLink icon={<Database className="w-4 h-4" />} label="Crawl History" badge={stats?.crawl_jobs ?? 0} onClick={() => router.push("/amancrawl")} />
         </nav>
 
-        <div className="mt-auto px-2 pt-3 border-t border-[#e5d8c9] dark:border-white/10">
-          <Link href="/dashboard" className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-[#f1e8dc] dark:hover:bg-white/5 transition">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#e67d2b] to-[#c9671d] flex items-center justify-center text-[10px] font-semibold text-white shrink-0">{initials}</div>
+        <div className="mt-auto border-t border-white/[0.08] px-3 pt-3">
+          <Link href="/dashboard" className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 transition hover:bg-white/[0.05]">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#f6e879] text-[10px] font-bold text-[#171814]">{initials}</div>
             <div className="flex-1 min-w-0">
-              <div className="text-xs font-medium truncate">{displayName}</div>
-              <div className="text-[10px] text-[#8b7f72] dark:text-[#a59b90]">{features.label} plan</div>
+              <div className="truncate text-xs font-medium text-white/85">{displayName}</div>
+              <div className="text-[10px] text-white/35">{features.label} plan</div>
             </div>
           </Link>
         </div>
@@ -213,48 +228,49 @@ export default function DashboardPage() {
 
       {/* ── MAIN ── */}
       <main className="min-w-0 flex-1 overflow-y-auto">
-        <AgentNavigation active="workspace" />
-        <div className="p-4 sm:p-7">
+        <div className="mx-auto max-w-[1440px] p-4 sm:p-7 lg:p-8">
         {/* Topbar */}
-        <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center">
+        <div className="relative mb-6 overflow-hidden rounded-[22px] border border-white/10 bg-[#0d0b08] p-5 sm:p-7">
+          <PaperDither
+            className="inset-y-0 right-0 w-[58%] opacity-80"
+            dark={{ colorBack: "#0d0b0800", colorFront: "#e85d18" }}
+            light={{ colorBack: "#0d0b0800", colorFront: "#e85d18" }}
+            eager
+            maxPixelCount={900 * 420}
+            scale={0.72}
+            shape="wave"
+            size={2.2}
+            speed={0.16}
+            type="4x4"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,#0d0b08_0%,rgba(13,11,8,0.92)_44%,rgba(13,11,8,0.16)_100%)]" />
+          <div className="relative z-10 flex flex-col gap-6 xl:flex-row xl:items-end">
           <div className="flex-1">
-            <h1 className="text-xl font-semibold tracking-tight">Dashboard</h1>
-            <p className="text-sm text-[#999] dark:text-[#555a6b] mt-0.5">
+            <div className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[#f6e879]"><Sparkles className="size-3.5" /> Live context</div>
+            <h1 className="font-heading text-3xl font-medium tracking-[-0.05em] text-white sm:text-4xl">Good to see you, {displayName}.</h1>
+            <p className="mt-2 text-sm text-white/45">
               {new Date().toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long", year: "numeric" })} · All systems operational
               {lastRefresh && (
-                <span className="ml-2 text-[10px] text-[#bbb] dark:text-[#555a6b]">
+                <span className="ml-2 text-[10px] text-white/30">
                   · Updated {lastRefresh.toLocaleTimeString()}
                 </span>
               )}
             </p>
           </div>
-
-          <button
-            onClick={() => void loadData(false)}
-            disabled={loadingData}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#e5d8c9] dark:border-white/10 text-xs text-[#8b7f72] hover:text-[#201510] dark:hover:text-white/80 transition"
-            title="Refresh now"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loadingData ? "animate-spin" : ""}`} />
-            Refresh
-          </button>
-
-          <div className="flex max-w-full gap-1.5 overflow-x-auto rounded-xl border border-[#c8d6d1] bg-[#f7f9f6] p-1 dark:border-white/10 dark:bg-[#111111]">
-            {([["lab", "Context-OS Memory", "#e67d2b"], ["crawl", "Context-OS Crawl", "#c9671d"], ["both", "Both", "#8b7f72"]] as const).map(([p, label, color]) => (
-              <button key={p} onClick={() => setPlatform(p)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition ${platform === p ? "bg-[#fff1e8] dark:bg-white/10 shadow-sm" : "text-[#8b7f72] hover:text-[#201510] dark:hover:text-white/80"}`} style={platform === p ? { color } : undefined}>
+          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex max-w-full gap-1 overflow-x-auto rounded-xl border border-white/10 bg-black/35 p-1 backdrop-blur">
+            {([["lab", "Kontext Memory", "#e67d2b"], ["crawl", "Kontext Crawl", "#c9671d"], ["both", "Both", "#8b7f72"]] as const).map(([p, label, color]) => (
+              <button key={p} onClick={() => setPlatform(p)} className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition ${platform === p ? "bg-white/10 text-white" : "text-white/45 hover:text-white/80"}`}>
                 <span className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
                 {label}
               </button>
             ))}
           </div>
-
-          <AnimatedThemeToggler className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#e5d8c9] dark:border-white/10 text-[#8b7f72] dark:text-[#a59b90] hover:text-[#201510] dark:hover:text-white transition" variant="circle" />
-
-          <Link href="/dashboard" className="flex items-center gap-2 bg-[#fffdfa] dark:bg-[#111111] border border-[#e5d8c9] dark:border-white/10 rounded-lg px-2.5 py-1.5 transition hover:border-[#e67d2b]/30">
-            <div className="w-5.5 h-5.5 rounded-full bg-gradient-to-br from-[#e67d2b] to-[#c9671d] flex items-center justify-center text-[8px] font-semibold text-white">{initials}</div>
-            <span className="text-xs font-medium hidden sm:inline">{displayName}</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#fff1e8] text-[#e67d2b] font-semibold">{features.label}</span>
-          </Link>
+          <button onClick={() => void loadData(false)} disabled={loadingData} className="flex items-center gap-2 rounded-xl border border-white/10 bg-black/35 px-3 py-2 text-xs text-white/55 transition hover:bg-white/10 hover:text-white" title="Refresh now">
+            <RefreshCw className={`size-3.5 ${loadingData ? "animate-spin" : ""}`} /> Refresh
+          </button>
+          </div>
+          </div>
         </div>
 
         {/* ── FETCH ERRORS ── */}
@@ -293,19 +309,9 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* ── USAGE QUOTA ── */}
-        {showCrawl && (
-          <div className="mb-6">
-            <UsageCounter
-              resources={["crawl:scrape", "crawl:search", "crawl:map", "crawl:crawl"]}
-              compact
-            />
-          </div>
-        )}
-
         {/* ── QUICK TOOL ── */}
         {showCrawl && (
-          <div className="bg-[#fffdfa] dark:bg-[#111111] border border-[#e5d8c9] dark:border-white/10 rounded-2xl p-4 mb-6">
+          <div id="retrieval-tool" className="mb-6 scroll-mt-6 rounded-2xl border border-[#e5d8c9] bg-[#fffdfa] p-4 dark:border-white/10 dark:bg-[#111111]">
             <div className="flex gap-1 mb-3 border-b border-[#e5d8c9] dark:border-white/10 pb-2.5">
               {TOOLS.map((t) => (
                 <button key={t.id} onClick={() => setActiveTab(t.id)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition ${activeTab === t.id ? "bg-[#fff1e8] text-[#e67d2b]" : "text-[#8b7f72] hover:text-[#201510] dark:hover:text-white/80"}`}>
@@ -328,7 +334,7 @@ export default function DashboardPage() {
 
         {/* ── TWO COL: Conversations + Memories ── */}
         {showConversations && (
-          <div className="mb-6 grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <div id="context-activity" className="mb-6 grid scroll-mt-6 grid-cols-1 gap-4 xl:grid-cols-2">
             {/* Recent Conversations */}
             <Panel title="Recent Conversations" count={conversations.length} color="#e67d2b" icon={<MessageIcon />}>
               {loadingData ? (
@@ -381,10 +387,10 @@ export default function DashboardPage() {
 
 function SideLink({ icon, label, active, badge, locked, onClick }: { icon: React.ReactNode; label: string; active?: boolean; badge?: number | string; locked?: boolean; onClick?: () => void }) {
   return (
-    <button onClick={onClick} disabled={locked} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition ${active ? "bg-[#fff1e8] text-[#e67d2b] font-medium" : "text-[#666] dark:text-[#8a8f9e] hover:bg-[#f1e8dc] dark:hover:bg-white/5"} ${locked ? "opacity-40 cursor-not-allowed" : ""}`}>
-      <span className="shrink-0 opacity-70">{icon}</span>
+    <button onClick={onClick} disabled={locked} className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-[13px] transition ${active ? "bg-[#f6e879] font-semibold text-[#171814]" : "text-white/45 hover:bg-white/[0.05] hover:text-white/80"} ${locked ? "cursor-not-allowed opacity-35" : ""}`}>
+      <span className="shrink-0 opacity-80">{icon}</span>
       <span className="flex-1 text-left">{label}</span>
-      {badge !== undefined && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#f1e8dc] dark:bg-white/5 text-[#8b7f72] dark:text-[#a59b90]">{badge}</span>}
+      {badge !== undefined && <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${active ? "bg-black/10 text-[#171814]" : "bg-white/[0.06] text-white/40"}`}>{badge}</span>}
     </button>
   );
 }
@@ -392,29 +398,30 @@ function SideLink({ icon, label, active, badge, locked, onClick }: { icon: React
 function StatCard({ color, label, value, max, loading }: { color: string; label: string; value: number; max: number; loading: boolean }) {
   const display = max === -1 ? "∞" : `${value}/${max}`;
   return (
-    <div className="bg-[#fffdfa] dark:bg-[#111111] border border-[#e5d8c9] dark:border-white/10 rounded-xl p-4">
-      <div className="flex items-center gap-1.5 text-[11px] text-[#8b7f72] dark:text-[#a59b90] uppercase tracking-wider mb-2">
+    <div className="relative overflow-hidden rounded-[16px] border border-white/[0.08] bg-[#10100f] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.025)]">
+      <div className="absolute inset-x-0 top-0 h-px opacity-70" style={{ background: `linear-gradient(90deg, ${color}, transparent 72%)` }} />
+      <div className="mb-3 flex items-center gap-1.5 text-[10px] uppercase tracking-[0.14em] text-white/40">
         <span className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
         {label}
       </div>
       {loading ? (
-        <div className="h-7 w-12 bg-[#e5d8c9] dark:bg-white/10 rounded animate-pulse" />
+        <div className="h-8 w-16 animate-pulse rounded bg-white/10" />
       ) : (
-        <div className="text-2xl font-bold tracking-tight">{value}</div>
+        <div className="text-3xl font-semibold tracking-[-0.04em] text-white">{value}</div>
       )}
-      <div className="text-[11px] text-[#bbb] dark:text-[#555a6b] mt-1">{loading ? "..." : display}</div>
+      <div className="mt-1 text-[11px] text-white/30">{loading ? "..." : display}</div>
     </div>
   );
 }
 
 function Panel({ title, count, color, icon, children }: { title: string; count: number; color: string; icon?: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="bg-[#fffdfa] dark:bg-[#111111] border border-[#e5d8c9] dark:border-white/10 rounded-2xl overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-[#e5d8c9] dark:border-white/10">
+    <div className="overflow-hidden rounded-[18px] border border-white/[0.08] bg-[#10100f]">
+      <div className="flex items-center gap-2 border-b border-white/[0.08] px-4 py-3.5">
         <span className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
         {icon}
-        <span className="text-xs font-semibold text-[#666] dark:text-[#8a8f9e] uppercase tracking-wider">{title}</span>
-        <span className="ml-auto text-[10px] text-[#8b7f72] dark:text-[#a59b90] bg-[#fffdfa] dark:bg-[#090909] px-2 py-0.5 rounded-full border border-[#e5d8c9] dark:border-white/10">{count}</span>
+        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/45">{title}</span>
+        <span className="ml-auto rounded-full border border-white/[0.08] bg-black/35 px-2 py-0.5 text-[10px] text-white/40">{count}</span>
       </div>
       <div className="max-h-72 overflow-y-auto">{children}</div>
     </div>
@@ -426,10 +433,10 @@ function LoadingSkeleton({ rows = 3 }: { rows?: number }) {
     <div className="p-4 space-y-3">
       {Array.from({ length: rows }).map((_, i) => (
         <div key={i} className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#e5d8c9] dark:bg-white/10 animate-pulse" />
+          <div className="w-8 h-8 rounded-lg bg-white/10 animate-pulse" />
           <div className="flex-1 space-y-1.5">
-            <div className="h-3 w-3/4 rounded bg-[#e5d8c9] dark:bg-white/10 animate-pulse" />
-            <div className="h-2.5 w-1/2 rounded bg-[#e5d8c9] dark:bg-white/10 animate-pulse" />
+            <div className="h-3 w-3/4 rounded bg-white/10 animate-pulse" />
+            <div className="h-2.5 w-1/2 rounded bg-white/10 animate-pulse" />
           </div>
         </div>
       ))}
@@ -440,8 +447,8 @@ function LoadingSkeleton({ rows = 3 }: { rows?: number }) {
 function EmptyState({ message, sub }: { message: string; sub: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-8 text-center">
-      <div className="text-sm font-medium text-[#666] dark:text-white/70">{message}</div>
-      <div className="text-[11px] text-[#999] dark:text-[#555a6b] mt-1">{sub}</div>
+      <div className="text-sm font-medium text-white/70">{message}</div>
+      <div className="mt-1 text-[11px] text-white/30">{sub}</div>
     </div>
   );
 }

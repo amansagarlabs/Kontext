@@ -1436,3 +1436,18 @@ main.homepage-shell [class*="max-w-[1216px]"] {
   --r-lg: 16px;
   --r-pill: 999px;
 }
+
+.auth-submit-button,
+.auth-submit-fill {
+  background: #f6e879 !important;
+  color: #171814 !important;
+}
+
+.auth-submit-button > * {
+  color: #171814 !important;
+}
+
+.auth-submit-button:hover,
+.auth-submit-button:hover .auth-submit-fill {
+  background: #fff39a !important;
+}

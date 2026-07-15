@@ -12,9 +12,8 @@ from pathlib import Path
 from app.config import Settings
 from embeddings.embedder import embed_texts
 from services.chunking import chunk_pages
-from services.document_store import find_pdf_for_doc
-from services.pdf_extract import extract_pdf_text
-from services.pdf_pages import extract_pages
+from services.document_store import find_artifact_for_doc
+from services.artifact_extract import extract_artifact_pages, extract_artifact_text
 from services.tokenizer_viz import analyze_tokens
 from vector_db.milvus_store import insert_chunks
 
@@ -26,16 +25,16 @@ async def run_pipeline_visualization(
     metrics: dict[str, float] = {}
 
     try:
-        pdf_path, filename = find_pdf_for_doc(doc_id, settings.uploads_dir)
+        artifact_path, filename = find_artifact_for_doc(doc_id, settings.uploads_dir)
     except FileNotFoundError as exc:
         yield _event("error", {"message": str(exc)})
         return
 
-    yield _event("step", {"id": "upload", "status": "done", "label": "PDF Uploaded"})
+    yield _event("step", {"id": "upload", "status": "done", "label": "Artifact Uploaded"})
 
     # --- Extract ---
     yield _event("step", {"id": "extract", "status": "running", "label": "Text Extracted"})
-    extract_data = extract_pdf_text(pdf_path)
+    extract_data = extract_artifact_text(artifact_path)
     metrics["extraction_ms"] = extract_data["duration_ms"]
     yield _event(
         "step",
@@ -48,7 +47,7 @@ async def run_pipeline_visualization(
         },
     )
 
-    page_list = extract_pages(pdf_path)
+    page_list = extract_artifact_pages(artifact_path)
 
     # --- Chunk ---
     yield _event("step", {"id": "chunk", "status": "running", "label": "Chunking Complete"})
@@ -60,6 +59,9 @@ async def run_pipeline_visualization(
         max_chunks=max_chunks,
     )
     chunks = chunk_data["chunks"]
+    if not chunks:
+        yield _event("error", {"message": "No indexable text was found in this artifact."})
+        return
     metrics["chunking_ms"] = chunk_data["duration_ms"]
     yield _event(
         "step",

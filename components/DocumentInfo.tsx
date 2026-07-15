@@ -15,7 +15,7 @@ export function DocumentInfo({ document }: Props) {
       <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
         <Item label="Filename" value={document.filename} />
         <Item label="Size" value={document.size_human} />
-        <Item label="Pages" value={String(document.page_count)} />
+        <Item label="Pages / sections" value={String(document.page_count)} />
         <Item label="Uploaded" value={uploaded} />
         <Item label="Document ID" value={document.doc_id} mono />
         <Item label="Path" value={document.stored_path} mono />

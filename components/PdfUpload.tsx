@@ -18,10 +18,6 @@ export function PdfUpload({ onUploaded, disabled }: Props) {
   const handleFile = useCallback(
     async (file: File) => {
       setError(null);
-      if (!file.name.toLowerCase().endsWith(".pdf")) {
-        setError("This upload flow currently accepts PDF files only.");
-        return;
-      }
       setLoading(true);
       try {
         const result = await uploadPdf(file);
@@ -75,7 +71,7 @@ export function PdfUpload({ onUploaded, disabled }: Props) {
         <input
           ref={inputRef}
           type="file"
-          accept="application/pdf,.pdf"
+          accept=".pdf,.txt,.md,.markdown,.csv,.json,.html,.htm,.docx,.py,.js,.jsx,.ts,.tsx,.css,.scss,.sql,.yaml,.yml,.xml,.toml,.ini,.log,.java,.go,.rs,.c,.h,.cpp,.hpp,.sh,.ps1"
           className="hidden"
           disabled={disabled || loading}
           onChange={(e) => {
@@ -100,7 +96,7 @@ export function PdfUpload({ onUploaded, disabled }: Props) {
             >
               Choose file
             </button>
-            <p className="mt-2 text-xs text-zinc-400">Max 20 MB · PDF upload flow</p>
+            <p className="mt-2 text-xs text-zinc-400">Max 20 MB Â· PDF, DOCX, text, data, web, and source files</p>
           </>
         )}
       </div>
@@ -111,4 +107,5 @@ export function PdfUpload({ onUploaded, disabled }: Props) {
     </section>
   );
 }
+
 

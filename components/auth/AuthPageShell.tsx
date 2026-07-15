@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ArrowLeft, Zap } from "lucide-react";
+import { ArrowLeft, Check, Sparkles } from "lucide-react";
+
+import { PaperDither } from "@/components/ui/paper-dither";
 
 export default function AuthPageShell({
   children,
@@ -10,35 +12,81 @@ export default function AuthPageShell({
   children: ReactNode;
 }) {
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(230,125,43,0.12),transparent_34%),linear-gradient(180deg,#f7f2ea_0%,#f1e8dc_100%)] text-[#201510] dark:bg-[radial-gradient(circle_at_top,rgba(230,125,43,0.16),transparent_34%),linear-gradient(180deg,#231915_0%,#1a120f_100%)] dark:text-white">
-      <div className="relative isolate min-h-screen overflow-hidden px-5 py-5 sm:px-8 lg:px-12">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_15%,rgba(255,255,255,0.6),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(230,125,43,0.08),transparent_24%)] opacity-90 dark:bg-[radial-gradient(circle_at_20%_15%,rgba(255,255,255,0.08),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(230,125,43,0.14),transparent_24%)] dark:opacity-100" />
-
-        <div className="mx-auto flex min-h-[calc(100vh-2.5rem)] w-full max-w-6xl flex-col">
-          <header className="flex items-center justify-between gap-4 pt-1">
+    <main className="min-h-screen bg-[#050505] text-[#f4f3ec] lg:h-dvh lg:min-h-0 lg:overflow-hidden">
+      <div className="mx-auto grid min-h-screen w-full max-w-[1500px] lg:h-dvh lg:min-h-0 lg:grid-cols-[minmax(440px,0.88fr)_minmax(0,1.12fr)]">
+        <section className="relative flex min-h-screen flex-col border-white/10 px-5 py-5 sm:px-8 sm:py-7 lg:h-dvh lg:min-h-0 lg:border-r lg:px-12 lg:py-6 xl:px-16">
+          <header className="flex items-center justify-between gap-4">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 rounded-full border border-[#e5d8c9] bg-[#fffdfa]/85 px-3 py-2 text-sm font-medium text-[#7a5b49] shadow-[0_10px_24px_-18px_rgba(64,43,24,0.18)] backdrop-blur transition hover:border-[#d7bfa6] hover:text-[#201510] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e67d2b]/40 dark:border-white/10 dark:bg-slate-950/70 dark:text-slate-300 dark:shadow-[0_10px_24px_-18px_rgba(0,0,0,0.5)] dark:hover:border-white/20 dark:hover:text-white dark:focus-visible:ring-[#e67d2b]/30"
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-sm font-medium text-white/60 transition hover:border-white/20 hover:bg-white/[0.06] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f6e879]/50"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft aria-hidden="true" className="size-4" />
               Back
             </Link>
 
             <Link
               href="/"
-              className="inline-flex items-center gap-2 rounded-full border border-[#e5d8c9] bg-[#fffdfa]/85 px-4 py-2 text-sm font-semibold text-[#201510] shadow-[0_10px_24px_-18px_rgba(64,43,24,0.18)] backdrop-blur dark:border-white/10 dark:bg-slate-950/70 dark:text-white dark:shadow-[0_10px_24px_-18px_rgba(0,0,0,0.5)]"
+              className="inline-flex items-center gap-2.5 text-sm font-semibold tracking-[-0.02em] text-white"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#e67d2b] text-white">
-                <Zap className="h-4 w-4" />
-              </span>
-              AmanAgent Lab
+              <span aria-hidden="true" className="size-6 rounded-full bg-[linear-gradient(135deg,#fff5a5_0%,#f6e66c_42%,#f27a28_100%)] shadow-[0_0_24px_rgba(242,122,40,0.22)]" />
+              kontext
             </Link>
           </header>
 
-          <div className="flex flex-1 items-center justify-center py-10 sm:py-12">
+          <div className="flex min-h-0 flex-1 items-center justify-center py-8 lg:py-5">
             {children}
           </div>
-        </div>
+
+          <p className="text-center font-mono text-[10px] uppercase tracking-[0.14em] text-white/30 lg:text-left">
+            Persistent memory · trusted context
+          </p>
+        </section>
+
+        <aside className="relative hidden min-h-0 overflow-hidden bg-[#110906] lg:block lg:h-dvh">
+          <PaperDither
+            className="inset-0"
+            dark={{ colorBack: "#080706", colorFront: "#f15a16" }}
+            light={{ colorBack: "#080706", colorFront: "#f15a16" }}
+            eager
+            maxPixelCount={1100 * 1200}
+            scale={0.72}
+            shape="warp"
+            size={2.4}
+            speed={0.18}
+            type="4x4"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(5,5,5,0.08)_0%,rgba(5,5,5,0.18)_45%,rgba(5,5,5,0.92)_100%)]" />
+          <div className="pointer-events-none absolute inset-0 opacity-25 [background-image:radial-gradient(rgba(255,255,255,0.18)_0.55px,transparent_0.65px)] [background-size:5px_5px]" />
+
+          <div className="relative z-10 flex h-full min-h-0 flex-col justify-between py-10 pl-5 pr-10 xl:py-14 xl:pl-7 xl:pr-14">
+            <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.16em] text-white/55">
+              <span className="inline-flex items-center gap-2">
+                <Sparkles aria-hidden="true" className="size-3.5 text-[#f6e879]" />
+                Kontext access
+              </span>
+              <span>01 / memory</span>
+            </div>
+
+            <div className="max-w-2xl pb-8">
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[#f6e879]">Your work, remembered.</p>
+              <h2 className="mt-5 max-w-xl text-balance font-heading text-5xl font-medium leading-[0.96] tracking-[-0.06em] text-white xl:text-6xl">
+                Start every session with context.
+              </h2>
+              <p className="mt-6 max-w-lg text-base leading-7 text-white/60">
+                Sign in once. Keep documents, decisions, and agent actions connected across every workspace.
+              </p>
+
+              <div className="mt-8 grid max-w-xl gap-2 sm:grid-cols-3">
+                {["Source linked", "Permission aware", "Always retrievable"].map((item) => (
+                  <div key={item} className="flex items-center gap-2 rounded-xl border border-white/10 bg-black/35 px-3 py-3 text-xs text-white/70 backdrop-blur">
+                    <Check aria-hidden="true" className="size-3.5 shrink-0 text-[#f6e879]" />
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </aside>
       </div>
     </main>
   );

@@ -1,7 +1,7 @@
 """
 Shared auth middleware — validates sessions, enforces scopes.
 
-Used by both Context-OS Memory and Context-OS Crawl backends.
+Used by both Kontext Memory and Kontext Crawl backends.
 Auth context flows from Next.js middleware → x-auth-context header → here.
 """
 
@@ -66,7 +66,7 @@ PLAN_SCOPES: dict[str, list[str]] = {
 class AuthContext:
     authenticated: bool
     user: dict[str, Any] | None = None
-    platform: str = "Context-OS Memory"
+    platform: str = "Kontext Memory"
     session_token: str | None = None
     scopes: list[str] = field(default_factory=list)
     api_key: str | None = None
@@ -110,11 +110,11 @@ async def get_auth_context(request: Request) -> AuthContext:
         try:
             ctx = json.loads(raw_header)
             if not ctx.get("authenticated") or not ctx.get("user") or not ctx.get("session_token"):
-                return AuthContext(authenticated=False, platform=ctx.get("platform", "Context-OS Memory"))
+                return AuthContext(authenticated=False, platform=ctx.get("platform", "Kontext Memory"))
             return AuthContext(
                 authenticated=True,
                 user=ctx["user"],
-                platform=ctx.get("platform", "Context-OS Memory"),
+                platform=ctx.get("platform", "Kontext Memory"),
                 session_token=ctx.get("session_token"),
                 scopes=ctx.get("scopes", []),
             )
@@ -139,7 +139,7 @@ async def get_auth_context(request: Request) -> AuthContext:
     if not user:
         return AuthContext(authenticated=False, session_token=token)
 
-    platform = request.headers.get("x-aman-platform", "Context-OS Memory")
+    platform = request.headers.get("x-aman-platform", "Kontext Memory")
     scopes = _scopes_for_user(user)
 
     return AuthContext(

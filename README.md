@@ -1,6 +1,6 @@
-# Context-OS Local Checkout
+# Kontext Local Checkout
 
-This repo is a local working tree for `AmanSagar0607/Context-OS`.
+This repo is a local working tree for `AmanSagar0607/Kontext`.
 The remote GitHub repo is the source of truth when this checkout drifts.
 
 ## Canonical Docs
@@ -17,7 +17,7 @@ The platform now has source-of-truth docs under `docs/`:
 
 ## Remote Source
 
-- GitHub: `https://github.com/AmanSagar0607/Context-OS`
+- GitHub: `https://github.com/AmanSagar0607/Kontext`
 - Use remote repo for latest structure, naming, and product direction.
 
 ## Current Stack

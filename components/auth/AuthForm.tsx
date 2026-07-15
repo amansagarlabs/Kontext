@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { saveAuthSession } from "@/lib/auth";
+import { hasCompletedOnboarding } from "@/lib/onboarding";
 import { loginWithEmail, signUpWithEmail } from "@/services/auth";
 
 type Mode = "login" | "signup";
@@ -38,7 +39,8 @@ function AuthFormInner({ mode }: { mode: Mode }) {
         : await loginWithEmail({ email, password });
 
       saveAuthSession(result.session, result.user);
-      router.push(redirectTo);
+      const needsOnboarding = isSignup || !hasCompletedOnboarding(result.user.id);
+      router.push(needsOnboarding ? "/onboarding" : redirectTo);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Authentication failed.");
@@ -48,15 +50,15 @@ function AuthFormInner({ mode }: { mode: Mode }) {
   }
 
   return (
-    <div className="w-full max-w-[440px] rounded-[2rem] border border-[#e5d8c9] bg-[rgba(255,253,250,0.92)] p-6 shadow-[0_18px_42px_-18px_rgba(64,43,24,0.14)] backdrop-blur-sm sm:p-8 dark:border-white/10 dark:bg-[rgba(15,23,42,0.82)] dark:shadow-[0_18px_42px_-18px_rgba(0,0,0,0.45)]">
+    <div className="w-full max-w-[460px] rounded-[24px] border border-white/10 bg-[#0d0d0c] p-6 shadow-[0_30px_80px_-42px_rgba(0,0,0,0.9)] sm:p-8">
       <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#c9671d] dark:text-orange-300">
-          AmanAgent Lab
+        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-[#f6e879]">
+          Kontext workspace
         </p>
-        <h1 className="mt-3 font-heading text-3xl font-semibold tracking-[-0.05em] text-[#201510] dark:text-white">
+        <h1 className="mt-4 font-heading text-3xl font-semibold tracking-[-0.05em] text-[#f4f3ec] sm:text-4xl">
           {isSignup ? "Create your account" : "Welcome back"}
         </h1>
-        <p className="mt-3 text-sm leading-7 text-[#737373] dark:text-slate-300">
+        <p className="mt-3 text-sm leading-7 text-white/50">
           {isSignup
             ? "Use email and password to open your workspace."
             : "Sign in to access your chats, profile, and artifact history."}
@@ -105,23 +107,30 @@ function AuthFormInner({ mode }: { mode: Mode }) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-full bg-[#e67d2b] px-4 py-3 text-sm font-semibold text-white shadow-[0_12px_24px_-16px_rgba(230,125,43,0.7)] transition hover:bg-[#d96f1d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e67d2b]/35 disabled:opacity-50 dark:bg-[#f08a35] dark:text-[#201510] dark:hover:bg-[#f39a4e] dark:focus-visible:ring-[#f08a35]/30"
+          className="auth-submit-button group relative isolate w-full overflow-hidden rounded-[12px] px-4 py-3 text-sm font-semibold shadow-[0_12px_28px_-18px_rgba(246,232,121,0.7)] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f6e879]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d0d0c] disabled:opacity-50"
         >
-          {loading
-            ? isSignup
-              ? "Creating account..."
-              : "Signing in..."
-            : isSignup
-              ? "Sign up"
-              : "Login"}
+          <span
+            aria-hidden="true"
+            className="auth-submit-fill pointer-events-none absolute inset-0 z-0 rounded-[inherit]"
+            style={{ background: "#f6e879" }}
+          />
+          <span className="relative z-10 text-[#171814]">
+            {loading
+              ? isSignup
+                ? "Creating account..."
+                : "Signing in..."
+              : isSignup
+                ? "Sign up"
+                : "Login"}
+          </span>
         </button>
       </form>
 
-      <p className="mt-6 text-sm text-[#737373] dark:text-slate-400">
+      <p className="mt-6 text-sm text-white/45">
         {isSignup ? "Already have an account?" : "Need an account?"}{" "}
         <Link
           href={isSignup ? "/login" : "/signup"}
-          className="font-medium text-[#201510] underline decoration-[#e67d2b]/50 underline-offset-4 transition hover:decoration-[#e67d2b] dark:text-white dark:decoration-orange-300/50 dark:hover:decoration-orange-200"
+          className="font-medium text-white underline decoration-[#f6e879]/45 underline-offset-4 transition hover:decoration-[#f6e879]"
         >
           {isSignup ? "Login" : "Sign up"}
         </Link>
@@ -148,21 +157,21 @@ function Field({
 
   return (
     <label className="block">
-      <span className="mb-1.5 block text-sm font-medium text-[#201510] dark:text-slate-100">{label}</span>
+      <span className="mb-1.5 block text-sm font-medium text-white/80">{label}</span>
       <div className="relative">
         <input
           type={isPassword && showPassword ? "text" : type}
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className="w-full rounded-[1rem] border border-[#e0d2c2] bg-white px-4 py-3 text-sm text-[#201510] outline-none transition placeholder:text-[#a18672] focus:border-[#d8b18b] focus:ring-2 focus:ring-[#e67d2b]/15 dark:border-white/10 dark:bg-slate-950/70 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-[#f08a35] dark:focus:ring-[#f08a35]/20"
+          className="w-full rounded-[12px] border border-white/10 bg-black/35 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/25 hover:border-white/15 focus:border-[#f6e879]/55 focus:ring-2 focus:ring-[#f6e879]/10"
           style={isPassword ? { paddingRight: "2.75rem" } : undefined}
         />
         {isPassword ? (
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a18672] transition hover:text-[#201510] dark:text-slate-500 dark:hover:text-white"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 transition hover:text-white"
             tabIndex={-1}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

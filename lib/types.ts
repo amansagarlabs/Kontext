@@ -110,14 +110,14 @@ export type AuthUser = {
   avatar_url?: string | null;
   plan: "free" | "pro" | "team" | "enterprise";
   created_at?: string;
-  platforms?: ("Context-OS Memory" | "Context-OS Crawl" | "AmanAgentLab" | "AmanCrawl")[];
+  platforms?: ("Kontext Memory" | "Kontext Crawl" | "AmanAgentLab" | "AmanCrawl")[];
   workspaces?: AuthWorkspace[];
 };
 
 export type AuthWorkspace = {
   id: string;
   name: string;
-  platform: "Context-OS Memory" | "Context-OS Crawl" | "AmanAgentLab" | "AmanCrawl";
+  platform: "Kontext Memory" | "Kontext Crawl" | "AmanAgentLab" | "AmanCrawl";
   last_active: string;
 };
 

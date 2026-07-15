@@ -20,7 +20,7 @@ This document is the source of truth for Aman Platform positioning.
 
 - AmanCrawl should be framed as infrastructure.
 - AmanAgentLab should be framed as the personal AI OS.
-- Context-OS should be the persistent intelligence layer behind both.
+- Kontext should be the persistent intelligence layer behind both.
 
 ## Messaging Shift
 

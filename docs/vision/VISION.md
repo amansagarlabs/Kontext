@@ -1,10 +1,10 @@
-# Context-OS Vision
+# Kontext Vision
 
 This document is the source of truth for the long-term product vision.
 
 ## North Star
 
-Context-OS remembers what users know, understands what they are doing, and helps complete work over time.
+Kontext remembers what users know, understands what they are doing, and helps complete work over time.
 
 Memory is foundation.
 

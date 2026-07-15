@@ -25,7 +25,7 @@ async def stream_chat_completion(
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
         "HTTP-Referer": "http://localhost:3000",
-        "X-Title": "Context-OS",
+        "X-Title": "Kontext",
     }
     payload = {
         "model": model,

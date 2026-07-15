@@ -624,7 +624,7 @@ export default function AmanCrawlPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f7f4] text-[#1b2420] dark:bg-[#11140f] dark:text-white">
+    <main className="dark min-h-screen bg-[#070707] text-white">
       {/* ── Promo Banner ──────────────────────────────────────────────── */}
       {showPromoBanner && (
         <div className="relative bg-[#fa5a19] px-4 py-2.5 text-center text-sm font-medium text-white">
@@ -646,7 +646,7 @@ export default function AmanCrawlPage() {
       <AgentNavigation active="crawl" />
 
       {/* ── Hero ──────────────────────────────────────────────────────── */}
-      <section className="relative isolate overflow-hidden border-b border-[#2d2f27] bg-[#090a08] px-4 pb-16 pt-14 text-[#f3f1e8] sm:px-8 lg:px-12 lg:pb-20">
+      <div className="relative isolate overflow-hidden bg-[linear-gradient(118deg,#080907_0%,#0d120a_42%,#25140b_76%,#160d08_100%)]">
         <div className="absolute inset-0 bg-[linear-gradient(118deg,#080907_0%,#0d120a_42%,#25140b_76%,#160d08_100%)]" />
         <PaperDither
           className="inset-0 opacity-70"
@@ -661,6 +661,8 @@ export default function AmanCrawlPage() {
         />
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_32%,rgba(238,91,28,0.38),transparent_22%),linear-gradient(90deg,rgba(5,6,4,0.52),rgba(8,9,6,0.14)_58%,rgba(61,24,10,0.22))]" />
         <div className="pointer-events-none absolute inset-0 opacity-55 [background-image:radial-gradient(rgba(4,5,3,0.9)_0.65px,transparent_0.8px)] [background-size:4px_4px]" />
+
+      <section className="relative z-10 px-4 pb-16 pt-14 text-[#f3f1e8] sm:px-8 lg:px-12 lg:pb-20">
 
         <div className="relative z-10 mx-auto max-w-5xl text-center">
           <div aria-label="Web memory tools" className="mx-auto mb-10 flex w-fit max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-white/10 bg-[#11120f]/90 p-1.5 shadow-[0_18px_50px_-30px_rgba(0,0,0,0.9)] backdrop-blur" role="tablist">
@@ -852,24 +854,15 @@ export default function AmanCrawlPage() {
         </div>
       </section>
 
-      {/* ── Usage Counter ─────────────────────────────────────────────── */}
-      {user && (
-        <section className="px-6 pb-6 sm:px-8 lg:px-12">
-          <div className="mx-auto max-w-5xl">
-            <UsageCounter
-              resources={["crawl:scrape", "crawl:search", "crawl:map", "crawl:crawl"]}
-              horizontal
-              refreshTrigger={usageRefreshTrigger}
-              onUpgrade={() => setShowSubscriptionModal(true)}
-            />
-          </div>
-        </section>
-      )}
+      </div>
 
       {/* ── Visual Demo ───────────────────────────────────────────────── */}
-      <section className="px-6 pb-20 sm:px-8 lg:px-12">
-        <div className="mx-auto max-w-5xl">
-          <div className="rounded-3xl border border-[#e5e7eb] bg-white p-2 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.15)] dark:border-white/10 dark:bg-white/5 dark:shadow-none">
+      <section className="relative isolate overflow-hidden bg-[linear-gradient(118deg,#080907_0%,#0d120a_42%,#25140b_76%,#160d08_100%)] px-6 pb-20 pt-4 sm:px-8 lg:px-12">
+        <PaperDither className="absolute inset-0 opacity-70" dark={{ colorBack: "#00000000", colorFront: "#536a1e" }} light={{ colorBack: "#00000000", colorFront: "#6f7428" }} maxPixelCount={1500 * 900} scale={0.76} shape="ripple" size={2} speed={0.16} type="4x4" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_32%,rgba(238,91,28,0.34),transparent_24%),linear-gradient(90deg,rgba(5,6,4,0.58),rgba(8,9,6,0.24)_58%,rgba(61,24,10,0.28))]" />
+        <div className="pointer-events-none absolute inset-0 opacity-55 [background-image:radial-gradient(rgba(4,5,3,0.9)_0.65px,transparent_0.8px)] [background-size:4px_4px]" />
+        <div className="relative z-10 mx-auto max-w-6xl">
+          <div className="rounded-[24px] border border-white/10 bg-[#10100f]/95 p-2 shadow-none backdrop-blur-sm">
             {/* Browser chrome */}
             <div className="flex items-center gap-2 rounded-t-2xl border-b border-[#e5e7eb] bg-[#faf7f2] px-4 py-3 dark:border-white/10 dark:bg-white/5">
               <div className="flex gap-1.5">
@@ -1112,12 +1105,25 @@ export default function AmanCrawlPage() {
               )}
             </div>
           </div>
+          {/* ── Usage Counter ─────────────────────────────────────────── */}
+          {user && (
+            <div className="mt-5 rounded-[22px] border border-white/10 bg-[#10100f]/95 p-3 backdrop-blur-sm sm:p-4">
+              <UsageCounter
+                resources={["crawl:scrape", "crawl:search", "crawl:map", "crawl:crawl"]}
+                horizontal
+                refreshTrigger={usageRefreshTrigger}
+                onUpgrade={() => setShowSubscriptionModal(true)}
+              />
+            </div>
+          )}
         </div>
       </section>
 
       {/* ── Features ──────────────────────────────────────────────────── */}
-      <section id="features" className="border-t border-[#e5e7eb] bg-[#faf7f2] px-6 py-20 sm:px-8 lg:px-12 dark:border-white/10 dark:bg-white/[0.02]">
-        <div className="mx-auto max-w-6xl">
+      <section id="features" className="relative isolate overflow-hidden border-t border-white/10 bg-[#0b0908] px-6 py-20 sm:px-8 lg:px-12">
+        <PaperDither className="absolute inset-0 opacity-35" dark={{ colorBack: "#0b090800", colorFront: "#e85d18" }} light={{ colorBack: "#0b090800", colorFront: "#e85d18" }} maxPixelCount={1500 * 900} scale={0.68} shape="wave" size={2} speed={0.14} type="4x4" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#0b0908_0%,rgba(11,9,8,.84)_38%,#0b0908_100%)]" />
+        <div className="relative z-10 mx-auto max-w-6xl">
           <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#fa5a19]">Features</p>
             <h2 className="mt-4 text-3xl font-bold tracking-tight text-[#201510] sm:text-4xl dark:text-white">
@@ -1132,7 +1138,7 @@ export default function AmanCrawlPage() {
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="group rounded-2xl border border-[#e5e7eb] bg-white p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_-10px_rgba(0,0,0,0.12)] dark:border-white/10 dark:bg-white/5 dark:hover:shadow-none"
+                className="group rounded-[20px] border border-white/10 bg-[#11100f]/90 p-6 backdrop-blur transition-all duration-200 hover:-translate-y-1 hover:border-[#fa5a19]/35"
               >
                 <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#fa5a19]/10 text-[#fa5a19] transition group-hover:bg-[#fa5a19] group-hover:text-white">
                   <feature.icon className="h-5 w-5" />
@@ -1146,7 +1152,7 @@ export default function AmanCrawlPage() {
       </section>
 
       {/* ── Use Cases ─────────────────────────────────────────────────── */}
-      <section id="use-cases" className="px-6 py-20 sm:px-8 lg:px-12">
+      <section id="use-cases" className="border-t border-white/10 bg-[#070707] px-6 py-20 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-6xl">
           <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#fa5a19]">Use Cases</p>
@@ -1162,7 +1168,7 @@ export default function AmanCrawlPage() {
             {useCases.map((useCase) => (
               <div
                 key={useCase.title}
-                className="group rounded-2xl border border-[#e5e7eb] bg-white p-8 transition-all duration-200 hover:-translate-y-1 hover:border-[#fa5a19]/25 hover:shadow-[0_16px_40px_-12px_rgba(250,90,25,0.15)] dark:border-white/10 dark:bg-white/5 dark:hover:border-[#fa5a19]/30 dark:hover:shadow-none"
+                className="group rounded-[20px] border border-white/10 bg-[#10100f] p-8 transition-all duration-200 hover:-translate-y-1 hover:border-[#fa5a19]/30"
               >
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#fa5a19] text-white transition group-hover:scale-110">
                   <useCase.icon className="h-6 w-6" />
@@ -1176,7 +1182,7 @@ export default function AmanCrawlPage() {
       </section>
 
       {/* ── Code Example ──────────────────────────────────────────────── */}
-      <section className="border-t border-[#e5e7eb] bg-[#faf7f2] px-6 py-20 sm:px-8 lg:px-12 dark:border-white/10 dark:bg-white/[0.02]">
+      <section className="border-t border-white/10 bg-[#0b0b0a] px-6 py-20 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
             <div>
@@ -1239,8 +1245,10 @@ console.log(result.json);
       </section>
 
       {/* ── CTA ───────────────────────────────────────────────────────── */}
-      <section className="px-6 py-20 sm:px-8 lg:px-12">
-        <div className="mx-auto max-w-4xl text-center">
+      <section className="relative isolate overflow-hidden border-t border-white/10 bg-[#0a0807] px-6 py-20 sm:px-8 lg:px-12">
+        <PaperDither className="absolute inset-x-0 bottom-0 h-full opacity-55" dark={{ colorBack: "#0a080700", colorFront: "#ed5d13" }} light={{ colorBack: "#0a080700", colorFront: "#ed5d13" }} maxPixelCount={1400 * 700} scale={0.65} shape="wave" size={2.2} speed={0.14} type="8x8" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#0a0807_0%,rgba(10,8,7,.82)_55%,rgba(10,8,7,.45)_100%)]" />
+        <div className="relative z-10 mx-auto max-w-4xl text-center">
           <h2 className="text-4xl font-bold tracking-tight text-[#201510] sm:text-5xl dark:text-white">
             Start building with{" "}
             <span className="text-[#fa5a19]">web intelligence</span>
@@ -1268,20 +1276,20 @@ console.log(result.json);
       </section>
 
       {/* ── Footer ────────────────────────────────────────────────────── */}
-      <footer className="border-t border-[#e5e7eb] px-6 py-12 sm:px-8 lg:px-12 dark:border-white/10">
+      <footer className="border-t border-white/10 bg-[#070707] px-6 py-12 sm:px-8 lg:px-12">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 sm:flex-row">
           <div className="flex items-center gap-2.5">
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#fa5a19] text-white">
               <Zap className="h-3.5 w-3.5" />
             </span>
-            <span className="text-sm font-semibold text-[#201510] dark:text-white">Context-OS</span>
+            <span className="text-sm font-semibold text-[#201510] dark:text-white">Kontext</span>
           </div>
           <div className="flex gap-6 text-sm text-[#666666] dark:text-white/50">
             <Link href="/" className="hover:text-[#201510] dark:hover:text-white">Home</Link>
             <Link href="/docs" className="hover:text-[#201510] dark:hover:text-white">Docs</Link>
             <Link href="https://github.com" className="hover:text-[#201510] dark:hover:text-white">GitHub</Link>
           </div>
-          <p className="text-xs text-[#999999] dark:text-white/30">© 2026 Context-OS. All rights reserved.</p>
+          <p className="text-xs text-[#999999] dark:text-white/30">© 2026 Kontext. All rights reserved.</p>
         </div>
       </footer>
 

@@ -192,3 +192,5 @@ ON CONFLICT (plan_id, resource_key) DO NOTHING;
 -- ── Update users table to reference subscriptions ─────────────────────────────
 -- Add subscription_id to users for quick lookup
 ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_id UUID REFERENCES subscriptions(id) ON DELETE SET NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS plan TEXT NOT NULL DEFAULT 'free'
+    CHECK (plan IN ('free', 'pro', 'team', 'enterprise'));

@@ -44,7 +44,7 @@ export interface MemoryItem {
 function authHeaders(): Record<string, string> {
   return {
     "Content-Type": "application/json",
-    ...buildAuthHeaders("Context-OS Memory"),
+    ...buildAuthHeaders("Kontext Memory"),
   };
 }
 
@@ -91,4 +91,30 @@ export async function fetchRecentMemories(limit = 10): Promise<MemoryItem[]> {
   if (!res.ok) return [];
   const data = await res.json();
   return data.items || [];
+}
+
+export async function importMemories(items: Array<Pick<MemoryItem, "key" | "content" | "source">>) {
+  const res = await fetch(`${API_URL}/api/dashboard/memories/import`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify({ items }),
+  });
+  if (!res.ok) throw new Error("Could not import memory data.");
+  return res.json() as Promise<{ imported: number }>;
+}
+
+export async function deleteMemory(key: string) {
+  const res = await fetch(`${API_URL}/api/dashboard/memories/${encodeURIComponent(key)}`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error("Could not delete this memory.");
+}
+
+export type ConnectionStatus = Record<string, { connected: boolean; driver?: string; path?: string; collection?: string; database?: string; host?: string; reason?: string }>;
+
+export async function fetchConnectionStatus(): Promise<ConnectionStatus> {
+  const res = await fetch(`${API_URL}/api/dashboard/connections`, { headers: authHeaders(), cache: "no-store" });
+  if (!res.ok) throw new Error("Could not load connection status.");
+  return res.json();
 }

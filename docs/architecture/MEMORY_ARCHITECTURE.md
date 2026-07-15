@@ -1,6 +1,6 @@
 # Memory Architecture
 
-This document is the source of truth for the Context-OS memory stack.
+This document is the source of truth for the Kontext memory stack.
 
 ## Layers
 

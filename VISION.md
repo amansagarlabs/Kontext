@@ -1,6 +1,6 @@
-# Context-OS
+# Kontext
 
-This document tracks the local direction for the `AmanSagar0607/Context-OS` repo.
+This document tracks the local direction for the `AmanSagar0607/Kontext` repo.
 When this checkout drifts, prefer the remote GitHub repo as source of truth.
 
 ## Source of Truth
@@ -45,13 +45,13 @@ Very few products combine:
 
 into a single ecosystem.
 
-Context-OS exists to unify these capabilities.
+Kontext exists to unify these capabilities.
 
 ---
 
 ## Platform Architecture
 
-Context-OS consists of two products.
+Kontext consists of two products.
 
 ### AmanAgentLab
 
@@ -360,7 +360,7 @@ This gives one company, one platform, two products, and a clear path from today'
 
 ## North Star
 
-Context-OS becomes the infrastructure layer that helps users:
+Kontext becomes the infrastructure layer that helps users:
 
 - Remember everything
 - Understand context

@@ -1,6 +1,6 @@
-# Context-OS Docs Index
+# Kontext Docs Index
 
-Canonical source-of-truth files for Context-OS:
+Canonical source-of-truth files for Kontext:
 
 - [Research](./research/MEMORY_RESEARCH.md)
 - [Vision](./vision/VISION.md)

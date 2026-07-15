@@ -123,7 +123,7 @@ function PrinciplePreview({ index }: { index: number }) {
                 <Database aria-hidden="true" className="size-4" />
               </span>
               <div>
-                <p className="text-[11px] font-semibold text-[#30342d] dark:text-[#f0f2e9]">context-os.local</p>
+                <p className="text-[11px] font-semibold text-[#30342d] dark:text-[#f0f2e9]">Kontext.local</p>
                 <p className="mt-0.5 font-mono text-[9px] text-[#777d70] dark:text-[#8e9589]">127.0.0.1 · private</p>
               </div>
             </div>
@@ -774,7 +774,7 @@ export default function Home() {
                     <ArrowUpRight aria-hidden="true" className="size-4" />
                   </a>
                   <span className="inline-flex min-h-11 items-center rounded-full border border-[#d4d0c7] bg-white px-4 text-sm font-medium text-[#76756f] dark:border-white/15 dark:bg-white/5 dark:text-[#d8d8d2]">
-                    context-os / terminal
+                    Kontext / terminal
                   </span>
                 </div>
               </div>
@@ -787,7 +787,7 @@ export default function Home() {
                     <span className="size-2 rounded-full bg-[#CAE0DA]" />
                   </div>
                   <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-[#737b6e]">
-                    context-os / terminal
+                    Kontext / terminal
                   </span>
                 </div>
                 <div className="space-y-6 p-5 font-mono text-[12px] leading-7 sm:p-7 sm:text-[13px]">
@@ -967,7 +967,7 @@ export default function Home() {
                       Docs starter
                     </span>
                     <span className="rounded-full border border-[#e2d8c8] bg-white/75 px-3 py-1 font-mono text-[10px] text-[#59544c] backdrop-blur dark:border-white/10 dark:bg-black/35 dark:text-white/60">
-                      pnpm create context-os
+                      pnpm create Kontext
                     </span>
                   </div>
                   <div className="relative mt-5 h-[240px] overflow-hidden rounded-[22px] border border-[#eadcc9] bg-[#0e0d0c] dark:border-white/10 sm:h-[280px] lg:h-[320px]">
@@ -991,7 +991,7 @@ export default function Home() {
                         Kontext CLI
                       </div>
                       <div className="mt-4 space-y-3 font-mono text-[12px] leading-6 text-white/85">
-                        <p>$ pnpm create context-os</p>
+                        <p>$ pnpm create Kontext</p>
                         <p>• docs
                           <br />• memory
                           <br />• workspace

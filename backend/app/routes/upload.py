@@ -24,11 +24,6 @@ async def upload_pdf(file: UploadFile = File(...)):
     if not file.filename:
         raise HTTPException(status_code=400, detail="Missing filename")
 
-    # Some browsers omit content_type; extension + PyMuPDF validate the file.
-    content_type = (file.content_type or "").lower()
-    if content_type and "pdf" not in content_type:
-        raise HTTPException(status_code=400, detail="File must be a PDF")
-
     try:
         raw = await file.read()
         result = await save_pdf_upload(

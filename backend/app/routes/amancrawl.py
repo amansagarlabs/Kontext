@@ -1,5 +1,5 @@
 """
-Context-OS Crawl API routes — web intelligence for AI agents.
+Kontext Crawl API routes — web intelligence for AI agents.
 
 All endpoints require authentication via x-auth-context header (set by Next.js middleware)
 or bearer token. Scope checks enforced per operation.
@@ -17,7 +17,7 @@ from agents.flows import AmanCrawlFlow, CrawlRequest as FlowCrawlRequest, Reques
 from agents.crawl_agents import WebIntelligenceCrew, synthesize_answer
 
 
-router = APIRouter(prefix="/api/amancrawl", tags=["context-os-crawl"])
+router = APIRouter(prefix="/api/amancrawl", tags=["Kontext-crawl"])
 
 # Initialize crew
 crew = WebIntelligenceCrew()

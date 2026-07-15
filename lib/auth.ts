@@ -45,8 +45,8 @@ export function setPlatform(platform: string) {
 }
 
 export function getPlatform(): string {
-  if (typeof window === "undefined") return "Context-OS Memory";
-  return localStorage.getItem(PLATFORM_KEY) || "Context-OS Memory";
+  if (typeof window === "undefined") return "Kontext Memory";
+  return localStorage.getItem(PLATFORM_KEY) || "Kontext Memory";
 }
 
 export function isAuthenticated(): boolean {

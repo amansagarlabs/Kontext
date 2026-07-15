@@ -1,5 +1,5 @@
 """
-Dashboard API routes — real-time stats for the Context-OS dashboard.
+Dashboard API routes — real-time stats for the Kontext dashboard.
 """
 
 from __future__ import annotations
@@ -11,7 +11,8 @@ from pydantic import BaseModel
 
 from app.auth_middleware import AuthContext, require_auth
 from app.config import get_settings
-from services.memory_store import get_profile_memories, _connect as sqlite_connect
+from services.memory_store import get_profile_memories, upsert_profile_memory, _connect as sqlite_connect
+from services.postgres_store import check_postgres_connection
 from services.postgres_store import (
     list_recent_conversations,
     postgres_enabled,
@@ -54,6 +55,16 @@ class MemoryItem(BaseModel):
     content: str
     source: str
     updated_at: str
+
+
+class MemoryImportItem(BaseModel):
+    key: str
+    content: str
+    source: str = "import"
+
+
+class MemoryImportRequest(BaseModel):
+    items: list[MemoryImportItem]
 
 
 def _get_crawl_usage(settings, user_id: str) -> dict[str, dict]:
@@ -238,3 +249,57 @@ async def get_recent_memories(
         return {"items": memories}
     except Exception as e:
         return {"items": [], "error": str(e)}
+
+
+@router.post("/memories/import")
+async def import_memories(
+    payload: MemoryImportRequest,
+    auth: AuthContext = Depends(require_auth),
+):
+    """Import or update user-owned memory records from JSON."""
+    settings = get_settings()
+    if not auth.user_id:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    for item in payload.items[:500]:
+        upsert_profile_memory(
+            settings,
+            user_id=auth.user_id,
+            doc_id="general",
+            memory_key=item.key.strip()[:120],
+            content=item.content.strip()[:4000],
+            source=item.source.strip()[:120] or "import",
+        )
+    return {"imported": min(len(payload.items), 500)}
+
+
+@router.delete("/memories/{memory_key}")
+async def delete_memory(
+    memory_key: str,
+    auth: AuthContext = Depends(require_auth),
+):
+    settings = get_settings()
+    if not auth.user_id:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    with sqlite_connect(settings) as conn:
+        cursor = conn.execute(
+            "DELETE FROM profile_memories WHERE user_id = ? AND doc_id = 'general' AND memory_key = ?",
+            (auth.user_id, memory_key),
+        )
+        conn.commit()
+    return {"deleted": cursor.rowcount > 0}
+
+
+@router.get("/connections")
+async def get_connections(auth: AuthContext = Depends(require_auth)):
+    """Return safe connection metadata; credentials are never exposed."""
+    settings = get_settings()
+    postgres = check_postgres_connection(settings)
+    return {
+        "memory": {"connected": True, "driver": "SQLite", "path": settings.memory_db_path},
+        "metadata": postgres,
+        "vectors": {
+            "connected": bool(settings.milvus_address and settings.milvus_token),
+            "driver": "Milvus / Zilliz",
+            "collection": settings.milvus_collection,
+        },
+    }
