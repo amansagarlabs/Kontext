@@ -1,0 +1,31 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# Next.js
+/.next/
+/out/
+
+# Environment — never commit secrets
+.env
+.env.local
+.env.*.local
+*zilliz*
+*username-password*
+
+# Python backend
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+*.py[cod]
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/**/data/*.db
+
+# Misc
+.DS_Store
+*.pem
+npm-debug.log*
+.vercel
+*.tsbuildinfo
