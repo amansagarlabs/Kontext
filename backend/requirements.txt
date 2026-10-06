@@ -7,7 +7,7 @@ python-dotenv>=1.0.1
 
 # Step 3+ — PDF & ML (installed now so venv is ready for later steps)
 pymupdf==1.25.2
-sentence-transformers==3.3.1
+sentence-transformers==5.6.0
 pymilvus==2.5.4
 httpx==0.28.1
 tiktoken==0.8.0
